@@ -1,13 +1,10 @@
-const express = require("express")
-const userController = require("../controllers/userController")
-const router = express.Router()
+const userRoutes = require("./userRoutes");
+const authRoutes = require("./authRoutes");
+const privateRoutes = require("./privateRoutes")
 const { expressjwt } = require("express-jwt");
 
-
-router.post("/users", userController.store)
-router.post("/login", userController.login)
-router.get("/private", expressjwt({ secret: "UnStringMuyScreto", algorithms: ["HS256"] }), userController.home)
-
-
-
-module.exports = router 
+module.exports = (app) => {
+    app.use(authRoutes);
+    app.use("/users", userRoutes);
+    app.use("/private", expressjwt({ secret: process.env.JWT_SECRET, algorithms: ["HS256"], }), privateRoutes)
+};

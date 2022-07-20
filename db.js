@@ -10,7 +10,9 @@ module.exports = async () => {
         error
       );
     });
+
     mongoose.connection.db.dropDatabase()
+
   } catch (error) {
     console.error("Error al iniciar conexión con la base de datos.", error);
   }

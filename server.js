@@ -6,7 +6,7 @@ const routes = require("./routes")
 require("./db")();
 
 app.use(express.json());
-app.use(routes);
+routes(app)
 
 
 app.listen(PORT, () => console.log(`Servidor corriendo en el puerto ${PORT}!`))
