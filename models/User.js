@@ -28,25 +28,33 @@ const userSchema = new Schema(
     }
 );
 
-userSchema.plugin(beautifyUnique)
+// Estos son Hooks/Middlewares de Mongoose. 
+// Son funciones que se ejecutan antes o después de ciertas acciones.
 
-userSchema.methods.toJSON = function () {
-    const user = this.toObject()
-    delete user.password
-    return user
-}
-
-userSchema.pre("save", function (next) {
+// Antes de guardar un usuario, se "encripta" su contraseña.
+userSchema.pre("save", async function (next) {
     if (this.isModified("password") || this.isNew) {
-        this.password = bcrypt.hash(this.password, 10)
+        this.password = await bcrypt.hash(this.password, 10);
     }
-    return next()
-})
+    return next();
+});
 
-userSchema.methods.comparePassword = async function (candidatePasswoord) {
-    const match = await bcrypt.compare(candidatePassowrd, this.password)
-    return match
-}
+// Agregamos un método para comparar contraseñas.
+userSchema.methods.comparePassword = async function (candidatePassword) {
+    const match = await bcrypt.compare(candidatePassword, this.password);
+    return match;
+};
+
+// toJSON es un método que se ejecuta antes de devolver un objeto al cliente.
+// Podemos pensarlo como la opcion "lean" de mongoose.
+// Cuando se devuelve un objeto al cliente, se le quita el campo password.
+userSchema.methods.toJSON = function () {
+    const user = this.toObject();
+    delete user.password;
+    return user;
+};
+
+userSchema.plugin(beautifyUnique);
 
 const User = model("User", userSchema);
 

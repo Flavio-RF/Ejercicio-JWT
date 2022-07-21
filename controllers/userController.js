@@ -16,11 +16,11 @@ module.exports = {
         try {
             const newUser = await User.create(req.body); // OJO: Esto puede ser peligroso debido al "Mass Assignment".
             const token = jwt.sign({ sub: newUser.id }, process.env.JWT_SECRET);
-            res.json({
+            res.status(201).json({
                 accessToken: token,
                 user: newUser,
             });
-            return res.status(201).json(newUser);
+            // return res.status(201).json(newUser);
 
         } catch (error) {
             if (error instanceof mongoose.Error.ValidationError) {
